@@ -22,11 +22,23 @@ class JogoDigital(Jogo):
     def resumo_disponibilidade(self):
         return "Jogo digital - somente catalogo"
 
+class Catalogo:
+    def __init__(self):
+        self.jogos = []
+
+    def cadastrar_jogo(self, jogo):
+        self.jogos.append(jogo)
+
+    def listar_jogos(self):
+        return self.jogos
+
+catalogo = Catalogo()
+
 jogo1 = JogoFisico("Minecraft", 2011, 3)
 jogo2 = JogoDigital("Stardew Valley", 2016, "Steam")
 
-jogos = [jogo1, jogo2]
+catalogo.cadastrar_jogo(jogo1)
+catalogo.cadastrar_jogo(jogo2)
 
-for jogo in jogos:
-    print(jogo.titulo)
-    print(jogo.resumo_disponibilidade())
+for jogo in catalogo.listar_jogos():
+    print(jogo.titulo, "-", jogo.resumo_disponibilidade())
