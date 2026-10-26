@@ -14,8 +14,19 @@ class JogoFisico(Jogo):
     def resumo_disponibilidade(self):
         return f"{self.quantidade} exemplares cadastrados"
 
+class JogoDigital(Jogo):
+    def __init__(self, titulo, ano, loja_origem):
+        super().__init__(titulo, ano)
+        self.loja_origem = loja_origem
 
-jogo = JogoFisico("Minecraft", 2011, 3)
+    def resumo_disponibilidade(self):
+        return "Jogo digital - somente catalogo"
 
-print(jogo.titulo)
-print(jogo.resumo_disponibilidade())
+jogo1 = JogoFisico("Minecraft", 2011, 3)
+jogo2 = JogoDigital("Stardew Valley", 2016, "Steam")
+
+jogos = [jogo1, jogo2]
+
+for jogo in jogos:
+    print(jogo.titulo)
+    print(jogo.resumo_disponibilidade())
