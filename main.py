@@ -1,3 +1,15 @@
+class Membro:
+    def __init__(self, id_membro: int, nome: str, email: str):
+        self.id_membro = id_membro
+        self.nome = nome
+        self.email = email
+        self.emprestimos = []
+
+    def contar_ativos(self) -> int:
+        return sum(1 for emp in self.emprestimos if emp.esta_ativo())
+
+    def pode_emprestar(self) -> bool:
+        return self.contar_ativos() < 3
 class Jogo:
     def __init__(self, titulo, ano):
         self.titulo = titulo
@@ -31,6 +43,25 @@ class Catalogo:
 
     def listar_jogos(self):
         return self.jogos
+
+class CadastroMembros:
+    def __init__(self):
+        self.membros: list[Membro] = []
+
+    def cadastrar(self, membro: Membro) -> bool:
+        if self.buscar(membro.id_membro) is not None:
+            return False
+        self.membros.append(membro)
+        return True
+
+    def buscar(self, id_membro: int) -> Membro | None:
+        for membro in self.membros:
+            if membro.id_membro == id_membro:
+                return membro
+        return None
+
+    def listar(self) -> list[Membro]:
+        return self.membros.copy()
 
 catalogo = Catalogo()
 
