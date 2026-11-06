@@ -25,6 +25,14 @@ class TestCategoria(unittest.TestCase):
         with self.assertRaises(ValueError):
             categoria.renomear("   ")
 
+    def test_id_e_nome_sao_somente_leitura(self):
+        categoria = Categoria(1, "Aventura")
+
+        with self.assertRaises(AttributeError):
+            categoria.id_categoria = 2
+        with self.assertRaises(AttributeError):
+            categoria.nome = "RPG"
+
 
 class TestExemplar(unittest.TestCase):
     def test_controlar_disponibilidade(self):
@@ -42,6 +50,14 @@ class TestExemplar(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             exemplar.marcar_emprestado()
+
+    def test_codigo_e_status_sao_somente_leitura(self):
+        exemplar = Exemplar("MC-001")
+
+        with self.assertRaises(AttributeError):
+            exemplar.codigo = "MC-002"
+        with self.assertRaises(AttributeError):
+            exemplar.status = "emprestado"
 
 
 class TestJogos(unittest.TestCase):
@@ -67,6 +83,25 @@ class TestJogos(unittest.TestCase):
         self.assertIsNone(jogo.obter_disponivel())
         self.assertEqual("Exemplares disponíveis: 0", jogo.resumo_disponibilidade())
 
+    def test_lista_de_exemplares_e_uma_copia(self):
+        jogo = JogoFisico("Minecraft", 2011)
+        jogo.adicionar_exemplar(Exemplar("MC-001"))
+
+        exemplares = jogo.exemplares
+        exemplares.clear()
+
+        self.assertEqual(1, len(jogo.exemplares))
+
+    def test_atualiza_dados_com_validacao(self):
+        jogo = JogoFisico("Minecraft", 2011)
+
+        jogo.atualizar_dados(titulo="Minecraft Java", ano=2012)
+
+        self.assertEqual("Minecraft Java", jogo.titulo)
+        self.assertEqual(2012, jogo.ano)
+        with self.assertRaises(ValueError):
+            jogo.atualizar_dados(titulo="")
+
     def test_jogo_digital_preserva_loja(self):
         jogo = JogoDigital("Stardew Valley", 2016, "Steam")
 
@@ -77,16 +112,27 @@ class TestJogos(unittest.TestCase):
 class TestMembro(unittest.TestCase):
     def test_conta_somente_emprestimos_ativos(self):
         membro = Membro(1, "Ana", "ana@example.com")
-        membro.emprestimos.extend([EmprestimoFalso(True), EmprestimoFalso(False)])
+        membro.adicionar_emprestimo(EmprestimoFalso(True))
+        membro.adicionar_emprestimo(EmprestimoFalso(False))
 
         self.assertEqual(1, membro.contar_ativos())
         self.assertTrue(membro.pode_emprestar())
 
     def test_limita_tres_emprestimos_ativos(self):
         membro = Membro(1, "Ana", "ana@example.com")
-        membro.emprestimos.extend(EmprestimoFalso(True) for _ in range(3))
+        for _ in range(3):
+            membro.adicionar_emprestimo(EmprestimoFalso(True))
 
         self.assertFalse(membro.pode_emprestar())
+
+    def test_lista_de_emprestimos_e_uma_copia(self):
+        membro = Membro(1, "Ana", "ana@example.com")
+        membro.adicionar_emprestimo(EmprestimoFalso(True))
+
+        emprestimos = membro.emprestimos
+        emprestimos.clear()
+
+        self.assertEqual(1, membro.contar_ativos())
 
 
 if __name__ == "__main__":

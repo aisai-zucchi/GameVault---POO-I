@@ -27,6 +27,15 @@ class TestCadastroMembros(unittest.TestCase):
 
         self.assertEqual(1, len(cadastro.listar()))
 
+    def test_propriedade_membros_e_uma_copia(self):
+        cadastro = CadastroMembros()
+        cadastro.cadastrar(Membro(1, "Ana", "ana@example.com"))
+
+        membros = cadastro.membros
+        membros.clear()
+
+        self.assertEqual(1, len(cadastro.membros))
+
 
 class TestCatalogo(unittest.TestCase):
     def test_cadastra_e_lista_jogos(self):
