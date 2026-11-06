@@ -102,6 +102,15 @@ class TestJogos(unittest.TestCase):
         with self.assertRaises(ValueError):
             jogo.atualizar_dados(titulo="")
 
+    def test_atualizacao_invalida_nao_altera_dados(self):
+        jogo = JogoFisico("Minecraft", 2011)
+
+        with self.assertRaises(ValueError):
+            jogo.atualizar_dados(titulo="Minecraft Java", ano=0)
+
+        self.assertEqual("Minecraft", jogo.titulo)
+        self.assertEqual(2011, jogo.ano)
+
     def test_jogo_digital_preserva_loja(self):
         jogo = JogoDigital("Stardew Valley", 2016, "Steam")
 

@@ -4,9 +4,16 @@ from gamevault.modelos.exemplar import Exemplar
 
 
 class Jogo(ABC):
-    def __init__(self, titulo: str, ano: int):
+    def __init__(self, titulo: str, ano: int, id_jogo: int | None = None):
+        self._id_jogo: int | None = None
         self._titulo = self._validar_titulo(titulo)
         self._ano = self._validar_ano(ano)
+        if id_jogo is not None:
+            self._atribuir_id(id_jogo)
+
+    @property
+    def id_jogo(self) -> int | None:
+        return self._id_jogo
 
     @property
     def titulo(self) -> str:
@@ -17,10 +24,17 @@ class Jogo(ABC):
         return self._ano
 
     def atualizar_dados(self, titulo: str | None = None, ano: int | None = None) -> None:
-        if titulo is not None:
-            self._titulo = self._validar_titulo(titulo)
-        if ano is not None:
-            self._ano = self._validar_ano(ano)
+        novo_titulo = self._titulo if titulo is None else self._validar_titulo(titulo)
+        novo_ano = self._ano if ano is None else self._validar_ano(ano)
+        self._titulo = novo_titulo
+        self._ano = novo_ano
+
+    def _atribuir_id(self, id_jogo: int) -> None:
+        if isinstance(id_jogo, bool) or not isinstance(id_jogo, int) or id_jogo <= 0:
+            raise ValueError("O ID do jogo deve ser um inteiro positivo.")
+        if self._id_jogo is not None and self._id_jogo != id_jogo:
+            raise ValueError("O ID de um jogo não pode ser alterado.")
+        self._id_jogo = id_jogo
 
     @staticmethod
     def _validar_titulo(titulo: str) -> str:
@@ -31,7 +45,7 @@ class Jogo(ABC):
 
     @staticmethod
     def _validar_ano(ano: int) -> int:
-        if not isinstance(ano, int) or ano <= 0:
+        if isinstance(ano, bool) or not isinstance(ano, int) or ano <= 0:
             raise ValueError("O ano do jogo deve ser um inteiro positivo.")
         return ano
 
@@ -41,8 +55,8 @@ class Jogo(ABC):
 
 
 class JogoFisico(Jogo):
-    def __init__(self, titulo: str, ano: int):
-        super().__init__(titulo, ano)
+    def __init__(self, titulo: str, ano: int, id_jogo: int | None = None):
+        super().__init__(titulo, ano, id_jogo)
         self._exemplares: list[Exemplar] = []
 
     @property
@@ -66,8 +80,14 @@ class JogoFisico(Jogo):
 
 
 class JogoDigital(Jogo):
-    def __init__(self, titulo: str, ano: int, loja_origem: str):
-        super().__init__(titulo, ano)
+    def __init__(
+        self,
+        titulo: str,
+        ano: int,
+        loja_origem: str,
+        id_jogo: int | None = None,
+    ):
+        super().__init__(titulo, ano, id_jogo)
         self._loja_origem = self._validar_loja_origem(loja_origem)
 
     @property
