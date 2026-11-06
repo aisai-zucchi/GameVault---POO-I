@@ -1,3 +1,6 @@
+from exemplar import Exemplar
+
+
 class Membro:
     def __init__(self, id_membro: int, nome: str, email: str):
         self.id_membro = id_membro
@@ -19,12 +22,22 @@ class Jogo:
         pass
 
 class JogoFisico(Jogo):
-    def __init__(self, titulo, ano, quantidade):
+    def __init__(self, titulo, ano):
         super().__init__(titulo, ano)
-        self.quantidade = quantidade
+        self.exemplares = []
 
-    def resumo_disponibilidade(self):
-        return f"{self.quantidade} exemplares cadastrados"
+    def adicionar_exemplar(self, exemplar: Exemplar) -> None:
+        self.exemplares.append(exemplar)
+
+    def obter_disponivel(self) -> Exemplar | None:
+        for exemplar in self.exemplares:
+            if exemplar.esta_disponivel():
+                return exemplar
+        return None
+
+    def resumo_disponibilidade(self) -> str:
+        quantidade = sum(1 for exemplar in self.exemplares if exemplar.esta_disponivel())
+        return f"Exemplares disponíveis: {quantidade}"
 
 class JogoDigital(Jogo):
     def __init__(self, titulo, ano, loja_origem):
@@ -65,7 +78,8 @@ class CadastroMembros:
 
 catalogo = Catalogo()
 
-jogo1 = JogoFisico("Minecraft", 2011, 3)
+jogo1 = JogoFisico("Minecraft", 2011)
+jogo1.adicionar_exemplar(Exemplar("MC-001"))
 jogo2 = JogoDigital("Stardew Valley", 2016, "Steam")
 
 catalogo.cadastrar_jogo(jogo1)
