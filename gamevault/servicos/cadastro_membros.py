@@ -1,4 +1,4 @@
-from membro import Membro
+from gamevault.modelos.membro import Membro
 
 
 class CadastroMembros:

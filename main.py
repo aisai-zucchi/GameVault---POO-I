@@ -1,89 +1,20 @@
-from exemplar import Exemplar
+from gamevault import Catalogo, Exemplar, JogoDigital, JogoFisico
 
 
-class Membro:
-    def __init__(self, id_membro: int, nome: str, email: str):
-        self.id_membro = id_membro
-        self.nome = nome
-        self.email = email
-        self.emprestimos = []
+def main() -> None:
+    catalogo = Catalogo()
 
-    def contar_ativos(self) -> int:
-        return sum(1 for emp in self.emprestimos if emp.esta_ativo())
+    minecraft = JogoFisico("Minecraft", 2011)
+    minecraft.adicionar_exemplar(Exemplar("MC-001"))
 
-    def pode_emprestar(self) -> bool:
-        return self.contar_ativos() < 3
-class Jogo:
-    def __init__(self, titulo, ano):
-        self.titulo = titulo
-        self.ano = ano
+    stardew_valley = JogoDigital("Stardew Valley", 2016, "Steam")
 
-    def resumo_disponibilidade(self):
-        pass
+    catalogo.cadastrar_jogo(minecraft)
+    catalogo.cadastrar_jogo(stardew_valley)
 
-class JogoFisico(Jogo):
-    def __init__(self, titulo, ano):
-        super().__init__(titulo, ano)
-        self.exemplares = []
+    for jogo in catalogo.listar_jogos():
+        print(jogo.titulo, "-", jogo.resumo_disponibilidade())
 
-    def adicionar_exemplar(self, exemplar: Exemplar) -> None:
-        self.exemplares.append(exemplar)
 
-    def obter_disponivel(self) -> Exemplar | None:
-        for exemplar in self.exemplares:
-            if exemplar.esta_disponivel():
-                return exemplar
-        return None
-
-    def resumo_disponibilidade(self) -> str:
-        quantidade = sum(1 for exemplar in self.exemplares if exemplar.esta_disponivel())
-        return f"Exemplares disponíveis: {quantidade}"
-
-class JogoDigital(Jogo):
-    def __init__(self, titulo, ano, loja_origem):
-        super().__init__(titulo, ano)
-        self.loja_origem = loja_origem
-
-    def resumo_disponibilidade(self):
-        return "Jogo digital - somente catalogo"
-
-class Catalogo:
-    def __init__(self):
-        self.jogos = []
-
-    def cadastrar_jogo(self, jogo):
-        self.jogos.append(jogo)
-
-    def listar_jogos(self):
-        return self.jogos
-
-class CadastroMembros:
-    def __init__(self):
-        self.membros: list[Membro] = []
-
-    def cadastrar(self, membro: Membro) -> bool:
-        if self.buscar(membro.id_membro) is not None:
-            return False
-        self.membros.append(membro)
-        return True
-
-    def buscar(self, id_membro: int) -> Membro | None:
-        for membro in self.membros:
-            if membro.id_membro == id_membro:
-                return membro
-        return None
-
-    def listar(self) -> list[Membro]:
-        return self.membros.copy()
-
-catalogo = Catalogo()
-
-jogo1 = JogoFisico("Minecraft", 2011)
-jogo1.adicionar_exemplar(Exemplar("MC-001"))
-jogo2 = JogoDigital("Stardew Valley", 2016, "Steam")
-
-catalogo.cadastrar_jogo(jogo1)
-catalogo.cadastrar_jogo(jogo2)
-
-for jogo in catalogo.listar_jogos():
-    print(jogo.titulo, "-", jogo.resumo_disponibilidade())
+if __name__ == "__main__":
+    main()
