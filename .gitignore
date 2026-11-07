@@ -1,0 +1,17 @@
+# Arquivos gerados pelo Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# Relatorios e caches de testes
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Configuracoes locais
+.env
+.vscode/
