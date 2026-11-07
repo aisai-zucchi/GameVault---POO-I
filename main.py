@@ -1,27 +1,40 @@
-from gamevault import Catalogo, Exemplar, JogoDigital, JogoFisico
+class Membro:
+    def __init__(self, id_membro: int, nome: str, email: str):
+        self.id_membro = id_membro
+        self.nome = nome
+        self.email = email
+        self.emprestimos = []
 
+    def contar_ativos(self) -> int:
+        return sum(1 for emp in self.emprestimos if emp.esta_ativo())
 
-def main() -> None:
-    catalogo = Catalogo()
+    def pode_emprestar(self) -> bool:
+        return self.contar_ativos() < 3
 
-<<<<<<< HEAD
+class Jogo:
+    def __init__(self, titulo, ano):
+        self.titulo = titulo
+        self.ano = ano
+
     def resumo_disponibilidade(self) -> str:
-        return""
-=======
-    minecraft = JogoFisico("Minecraft", 2011)
-    minecraft.adicionar_exemplar(Exemplar("MC-001"))
->>>>>>> 18c65c847b266eb5c7a1a6272754a3884e9e36f2
+        return ""
 
-    stardew_valley = JogoDigital("Stardew Valley", 2016, "Steam")
+class JogoFisico(Jogo):
+    def __init__(self, titulo, ano, quantidade):
+        super().__init__(titulo, ano)
+        self.quantidade = quantidade
 
-    catalogo.cadastrar_jogo(minecraft)
-    catalogo.cadastrar_jogo(stardew_valley)
+    def resumo_disponibilidade(self):
+        return f"{self.quantidade} exemplares cadastrados"
 
-    for jogo in catalogo.listar_jogos():
-        print(jogo.titulo, "-", jogo.resumo_disponibilidade())
+class JogoDigital(Jogo):
+    def __init__(self, titulo, ano, loja_origem):
+        super().__init__(titulo, ano)
+        self.loja_origem = loja_origem
 
+    def resumo_disponibilidade(self):
+        return "Jogo digital - somente catalogo"
 
-<<<<<<< HEAD
 class Catalogo:
     def __init__(self):
         self.jogos = []
@@ -51,17 +64,18 @@ class CadastroMembros:
     def listar(self) -> list[Membro]:
         return self.membros.copy()
 
-catalogo = Catalogo()
 
-jogo1 = JogoFisico("Minecraft", 2011, 3)
-jogo2 = JogoDigital("Stardew Valley", 2016, "Steam")
+def main() -> None:
+    catalogo = Catalogo()
 
-catalogo.cadastrar_jogo(jogo1)
-catalogo.cadastrar_jogo(jogo2)
+    minecraft = JogoFisico("Minecraft", 2011, 3)
+    stardew_valley = JogoDigital("Stardew Valley", 2016, "Steam")
 
-for jogo in catalogo.listar_jogos():
-    print(jogo.titulo, "-", jogo.resumo_disponibilidade())
-=======
+    catalogo.cadastrar_jogo(minecraft)
+    catalogo.cadastrar_jogo(stardew_valley)
+
+    for jogo in catalogo.listar_jogos():
+        print(jogo.titulo, "-", jogo.resumo_disponibilidade())
+
 if __name__ == "__main__":
     main()
->>>>>>> 18c65c847b266eb5c7a1a6272754a3884e9e36f2
