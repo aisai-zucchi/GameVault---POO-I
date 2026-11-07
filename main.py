@@ -15,8 +15,8 @@ class Jogo:
         self.titulo = titulo
         self.ano = ano
 
-    def resumo_disponibilidade(self):
-        pass
+    def resumo_disponibilidade(self) -> str:
+        return""
 
 class JogoFisico(Jogo):
     def __init__(self, titulo, ano, quantidade):
