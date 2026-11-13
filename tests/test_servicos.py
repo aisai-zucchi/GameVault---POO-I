@@ -1,3 +1,5 @@
+"""Testes unitários dos serviços de catálogo e membros."""
+
 import unittest
 
 from gamevault import (

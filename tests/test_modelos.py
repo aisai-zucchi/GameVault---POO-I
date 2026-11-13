@@ -1,3 +1,5 @@
+"""Testes unitários dos modelos de domínio."""
+
 import unittest
 
 from gamevault import Categoria, Exemplar, Jogo, JogoDigital, JogoFisico, Membro
@@ -115,7 +117,10 @@ class TestJogos(unittest.TestCase):
         jogo = JogoDigital("Stardew Valley", 2016, "Steam")
 
         self.assertEqual("Steam", jogo.loja_origem)
-        self.assertEqual("Jogo digital - somente catalogo", jogo.resumo_disponibilidade())
+        self.assertEqual(
+            "Jogo digital - somente catalogo",
+            jogo.resumo_disponibilidade(),
+        )
 
 
 class TestMembro(unittest.TestCase):

@@ -1,3 +1,5 @@
+"""Testes da demonstração executável do projeto."""
+
 import importlib
 import io
 import sys
@@ -15,15 +17,24 @@ class TestMain(unittest.TestCase):
 
         self.assertEqual("", saida.getvalue())
 
-    def test_main_exibe_catalogo(self):
+    def test_main_demonstra_fluxo_completo(self):
         modulo = importlib.import_module("main")
         saida = io.StringIO()
 
         with redirect_stdout(saida):
             modulo.main()
 
-        self.assertIn("Minecraft - Exemplares disponíveis: 1", saida.getvalue())
-        self.assertIn("Stardew Valley - Jogo digital - somente catalogo", saida.getvalue())
+        texto = saida.getvalue()
+        self.assertIn("CATÁLOGO", texto)
+        self.assertIn("Minecraft", texto)
+        self.assertIn("Stardew Valley Expanded", texto)
+        self.assertIn("BLOQUEIO RN01", texto)
+        self.assertIn("BLOQUEIO RN02", texto)
+        self.assertIn("EXCLUSÃO BLOQUEADA", texto)
+        self.assertIn("DEVOLUÇÃO", texto)
+        self.assertIn("HISTÓRICO DE EMPRÉSTIMOS", texto)
+        self.assertIn("EMPRÉSTIMOS ATIVOS: 0", texto)
+        self.assertIn("JOGOS RESTANTES: 1", texto)
 
 
 if __name__ == "__main__":
