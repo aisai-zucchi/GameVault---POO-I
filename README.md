@@ -16,6 +16,7 @@ Repositório: [aisai-zucchi/GameVault---POO-I](https://github.com/aisai-zucchi/G
 - devolução com liberação do exemplar;
 - bloqueio de exclusão de jogos com exemplar emprestado;
 - fachada `SistemaGameVault` para integrar catálogo, membros e empréstimos.
+- interface Tkinter dark mode para consulta do catálogo.
 
 ## Regras de negócio
 
@@ -48,6 +49,14 @@ de devolvido.
 gamevault/
 |-- __init__.py                 # API pública
 |-- sistema.py                  # Fachada de integração
+|-- interface/                  # Interface Tkinter
+|   |-- __init__.py
+|   |-- __main__.py
+|   |-- app.py
+|   |-- assets/
+|   |   `-- logo.png
+|   |-- estilos.py
+|   `-- tela_catalogo.py
 |-- modelos/
 |   |-- categoria.py
 |   |-- emprestimo.py
@@ -60,6 +69,7 @@ gamevault/
     `-- gestor_emprestimos.py
 tests/
 |-- test_gamevault.py           # Fluxos integrados e regras RN01/RN02
+|-- test_interface.py
 |-- test_main.py
 |-- test_modelos.py
 `-- test_servicos.py
@@ -83,6 +93,23 @@ A demonstração cria as classes principais, exibe o catálogo de forma
 polimórfica, atualiza um jogo, registra empréstimos, comprova os bloqueios de
 RN01 e RN02, realiza devoluções, preserva o histórico e valida a exclusão.
 
+## Interface gráfica
+
+Para abrir a interface com o catálogo vazio:
+
+```bash
+python -B -m gamevault.interface
+```
+
+Para abrir com alguns dados de exemplo:
+
+```bash
+python -B -m gamevault.interface --demo
+```
+
+A tela atual permite pesquisar, filtrar e consultar os detalhes dos jogos. As
+demais telas serão adicionadas nas próximas etapas.
+
 ## Executar os testes
 
 ```bash
@@ -92,8 +119,3 @@ python -B -m unittest discover -s tests -v
 Os testes cobrem modelos, encapsulamento, CRUD, categorias, consultas,
 polimorfismo, empréstimos, devoluções, RN01, RN02, integração do sistema e a
 demonstração do terminal.
-
-## Escopo da entrega
-
-Este estado corresponde à segunda entrega do projeto. A interface Tkinter e os
-itens da terceira entrega não fazem parte deste código.
