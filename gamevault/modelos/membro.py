@@ -8,6 +8,12 @@ class _EmprestimoAtivo(Protocol):
 
 class Membro:
     def __init__(self, id_membro: int, nome: str, email: str):
+        if isinstance(id_membro, bool) or not isinstance(id_membro, int):
+            raise TypeError("O ID do membro deve ser um número inteiro.")
+        if id_membro <= 0:
+            raise ValueError("O ID do membro deve ser positivo.")
+        if not isinstance(nome, str) or not isinstance(email, str):
+            raise TypeError("Nome e e-mail do membro devem ser textos.")
         nome = nome.strip()
         email = email.strip()
         if not nome:

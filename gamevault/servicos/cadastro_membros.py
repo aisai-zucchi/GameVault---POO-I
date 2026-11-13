@@ -10,6 +10,8 @@ class CadastroMembros:
         return self._membros.copy()
 
     def cadastrar(self, membro: Membro) -> bool:
+        if not isinstance(membro, Membro):
+            raise TypeError("Apenas membros válidos podem ser cadastrados.")
         if self.buscar(membro.id_membro) is not None:
             return False
         self._membros.append(membro)
