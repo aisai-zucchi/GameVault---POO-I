@@ -9,9 +9,18 @@ venv/
 
 # Relatorios e caches de testes
 .coverage
+coverage.xml
 htmlcov/
 .pytest_cache/
 
 # Configuracoes locais
 .env
 .vscode/
+.idea/
+
+# Empacotamento e sistema operacional
+build/
+dist/
+*.egg-info/
+.DS_Store
+Thumbs.db
