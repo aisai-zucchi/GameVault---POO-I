@@ -1,5 +1,6 @@
 from datetime import date
 
+from gamevault.modelos.categoria import Categoria
 from gamevault.modelos.emprestimo import Emprestimo
 from gamevault.modelos.exemplar import Exemplar
 from gamevault.modelos.jogo import Jogo, JogoFisico
@@ -40,6 +41,34 @@ class SistemaGameVault:
 
     def cadastrar_jogo(self, jogo: Jogo) -> int:
         return self._catalogo.cadastrar_jogo(jogo)
+
+    def atualizar_jogo(
+        self,
+        id_jogo: int,
+        titulo: str | None = None,
+        ano: int | None = None,
+        loja_origem: str | None = None,
+        plataforma: str | None = None,
+        id_categoria: int | None = None,
+    ) -> Jogo:
+        return self._catalogo.atualizar_jogo(
+            id_jogo,
+            titulo,
+            ano,
+            loja_origem,
+            plataforma,
+            id_categoria,
+        )
+
+    def cadastrar_categoria(self, categoria: Categoria) -> None:
+        self._catalogo.cadastrar_categoria(categoria)
+
+    def renomear_categoria(
+        self,
+        id_categoria: int,
+        novo_nome: str,
+    ) -> Categoria:
+        return self._catalogo.renomear_categoria(id_categoria, novo_nome)
 
     def cadastrar_membro(self, membro: Membro) -> bool:
         return self._cadastro_membros.cadastrar(membro)

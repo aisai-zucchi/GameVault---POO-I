@@ -1,11 +1,14 @@
 import tkinter as tk
 from collections.abc import Callable
-from tkinter import ttk
+from tkinter import messagebox, ttk
 
+from gamevault.interface.formulario_exemplar import FormularioExemplar
+from gamevault.interface.formulario_jogo import FormularioJogo
+from gamevault.interface.janela_categorias import JanelaCategorias
+from gamevault.interface.estilos import CORES, FONTE
 from gamevault.modelos.jogo import Jogo, JogoDigital, JogoFisico
 from gamevault.servicos.catalogo import Catalogo
 from gamevault.sistema import SistemaGameVault
-from gamevault.interface.estilos import CORES, FONTE
 
 
 TIPOS_FILTRO = {
@@ -63,6 +66,9 @@ class TelaCatalogo(ttk.Frame):
         self.ao_notificar = ao_notificar
         self._jogos_por_item: dict[str, Jogo] = {}
         self._id_selecionado: int | None = None
+        self._formulario_jogo: FormularioJogo | None = None
+        self._janela_categorias: JanelaCategorias | None = None
+        self._formulario_exemplar: FormularioExemplar | None = None
 
         self.busca_var = tk.StringVar()
         self.tipo_var = tk.StringVar(value="Todos os tipos")
@@ -104,10 +110,22 @@ class TelaCatalogo(ttk.Frame):
         ).grid(row=0, column=1, padx=(12, 10))
         ttk.Button(
             cabecalho,
+            text="Categorias",
+            style="Secondary.TButton",
+            command=self._abrir_categorias,
+        ).grid(row=0, column=2, padx=(0, 8))
+        ttk.Button(
+            cabecalho,
             text="Atualizar",
             style="Secondary.TButton",
             command=self._atualizar_manualmente,
-        ).grid(row=0, column=2)
+        ).grid(row=0, column=3, padx=(0, 8))
+        ttk.Button(
+            cabecalho,
+            text="Novo jogo",
+            style="Primary.TButton",
+            command=self._novo_jogo,
+        ).grid(row=0, column=4)
 
     def _criar_filtros(self) -> None:
         filtros = tk.Frame(
@@ -287,6 +305,110 @@ class TelaCatalogo(ttk.Frame):
         self.plataforma_var.set("Todas as plataformas")
         self.atualizar(silencioso=True)
 
+    def _novo_jogo(self) -> None:
+        if self._janela_esta_aberta(self._formulario_jogo):
+            self._formulario_jogo.lift()
+            return
+        self._formulario_jogo = FormularioJogo(
+            self,
+            self.sistema,
+            ao_salvar=lambda jogo: self._apos_salvar_jogo(
+                jogo,
+                "Jogo cadastrado.",
+            ),
+        )
+
+    def _editar_jogo(self) -> None:
+        jogo = self._jogo_selecionado()
+        if jogo is None:
+            self._notificar("Selecione um jogo para editar.", "alerta")
+            return
+        if self._janela_esta_aberta(self._formulario_jogo):
+            self._formulario_jogo.lift()
+            return
+        self._formulario_jogo = FormularioJogo(
+            self,
+            self.sistema,
+            jogo=jogo,
+            ao_salvar=lambda atualizado: self._apos_salvar_jogo(
+                atualizado,
+                "Jogo atualizado.",
+            ),
+        )
+
+    def _excluir_jogo(self) -> None:
+        jogo = self._jogo_selecionado()
+        if jogo is None:
+            self._notificar("Selecione um jogo para excluir.", "alerta")
+            return
+        confirmou = messagebox.askyesno(
+            "Excluir jogo",
+            f"Excluir '{jogo.titulo}' do catálogo?",
+            parent=self.winfo_toplevel(),
+        )
+        if not confirmou:
+            return
+        try:
+            self.sistema.excluir_jogo(jogo.id_jogo)
+        except (TypeError, ValueError) as erro:
+            self._notificar(str(erro), "erro")
+            return
+        self._id_selecionado = None
+        self.atualizar(silencioso=True)
+        self._notificar("Jogo excluído.", "sucesso")
+
+    def _abrir_categorias(self) -> None:
+        if self._janela_esta_aberta(self._janela_categorias):
+            self._janela_categorias.lift()
+            return
+        self._janela_categorias = JanelaCategorias(
+            self,
+            self.sistema,
+            ao_alterar=self._apos_alterar_categorias,
+        )
+
+    def _adicionar_exemplar(self) -> None:
+        jogo = self._jogo_selecionado()
+        if not isinstance(jogo, JogoFisico):
+            self._notificar("Selecione um jogo físico.", "alerta")
+            return
+        if self._janela_esta_aberta(self._formulario_exemplar):
+            self._formulario_exemplar.lift()
+            return
+        self._formulario_exemplar = FormularioExemplar(
+            self,
+            self.sistema,
+            jogo,
+            ao_salvar=lambda _exemplar: self._apos_adicionar_exemplar(jogo),
+        )
+
+    def _apos_salvar_jogo(self, jogo: Jogo, mensagem: str) -> None:
+        self._id_selecionado = jogo.id_jogo
+        self.limpar_filtros()
+        self._notificar(mensagem, "sucesso")
+
+    def _apos_alterar_categorias(self) -> None:
+        self.atualizar(silencioso=True)
+        self._notificar("Categorias atualizadas.", "sucesso")
+
+    def _apos_adicionar_exemplar(self, jogo: JogoFisico) -> None:
+        self._id_selecionado = jogo.id_jogo
+        self.atualizar(silencioso=True)
+        self._notificar("Exemplar cadastrado.", "sucesso")
+
+    def _jogo_selecionado(self) -> Jogo | None:
+        if self._id_selecionado is None:
+            return None
+        return self.catalogo.buscar_jogo(self._id_selecionado)
+
+    @staticmethod
+    def _janela_esta_aberta(janela: tk.Toplevel | None) -> bool:
+        return janela is not None and bool(janela.winfo_exists())
+
+    def _notificar(self, mensagem: str, tipo: str) -> None:
+        if self.ao_notificar is not None:
+            self.ao_notificar(mensagem, tipo)
+
     def atualizar(self, silencioso: bool = False) -> None:
         self._atualizar_opcoes_filtro()
         try:
@@ -457,6 +579,33 @@ class TelaCatalogo(ttk.Frame):
         else:
             self._adicionar_badge(badges, "Acesso digital", CORES["texto_secundario"])
 
+        acoes = tk.Frame(self.detalhes, bg=CORES["superficie"])
+        acoes.pack(fill=tk.X, pady=(0, 18))
+        acoes.columnconfigure(0, weight=1)
+        acoes.columnconfigure(1, weight=1)
+        ttk.Button(
+            acoes,
+            text="Editar",
+            style="DetailAction.TButton",
+            command=self._editar_jogo,
+        ).grid(row=0, column=0, sticky="ew", padx=(0, 5))
+        coluna_excluir = 1
+        if isinstance(jogo, JogoFisico):
+            acoes.columnconfigure(2, weight=1)
+            ttk.Button(
+                acoes,
+                text="+ Exemplar",
+                style="DetailAction.TButton",
+                command=self._adicionar_exemplar,
+            ).grid(row=0, column=1, sticky="ew", padx=(0, 5))
+            coluna_excluir = 2
+        ttk.Button(
+            acoes,
+            text="Excluir",
+            style="DetailDanger.TButton",
+            command=self._excluir_jogo,
+        ).grid(row=0, column=coluna_excluir, sticky="ew")
+
         dados = tk.Frame(self.detalhes, bg=CORES["superficie"])
         dados.pack(fill=tk.X)
         self._campo_detalhe(dados, "CATEGORIA", nome_categoria(jogo))
@@ -517,26 +666,27 @@ class TelaCatalogo(ttk.Frame):
                 fg=CORES["texto_secundario"],
                 font=(FONTE, 9),
             ).pack(anchor="w")
-            return
-
-        lista = ttk.Treeview(
-            self.detalhes,
-            columns=("codigo", "status"),
-            show="headings",
-            height=min(6, max(2, len(jogo.exemplares))),
-            style="GameVault.Treeview",
-        )
-        lista.heading("codigo", text="CÓDIGO", anchor=tk.W)
-        lista.heading("status", text="STATUS", anchor=tk.W)
-        lista.column("codigo", width=120, minwidth=90, anchor=tk.W)
-        lista.column("status", width=105, minwidth=90, anchor=tk.W)
-        for exemplar in jogo.exemplares:
-            lista.insert(
-                "",
-                tk.END,
-                values=(
-                    exemplar.codigo,
-                    "Disponível" if exemplar.esta_disponivel() else "Emprestado",
-                ),
+        else:
+            lista = ttk.Treeview(
+                self.detalhes,
+                columns=("codigo", "status"),
+                show="headings",
+                height=min(5, max(2, len(jogo.exemplares))),
+                style="GameVault.Treeview",
             )
-        lista.pack(fill=tk.X)
+            lista.heading("codigo", text="CÓDIGO", anchor=tk.W)
+            lista.heading("status", text="STATUS", anchor=tk.W)
+            lista.column("codigo", width=120, minwidth=90, anchor=tk.W)
+            lista.column("status", width=105, minwidth=90, anchor=tk.W)
+            for exemplar in jogo.exemplares:
+                lista.insert(
+                    "",
+                    tk.END,
+                    values=(
+                        exemplar.codigo,
+                        "Disponível"
+                        if exemplar.esta_disponivel()
+                        else "Emprestado",
+                    ),
+                )
+            lista.pack(fill=tk.X)

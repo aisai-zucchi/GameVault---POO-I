@@ -91,6 +91,17 @@ class Catalogo:
     def listar_categorias(self) -> list[Categoria]:
         return list(self._categorias.values())
 
+    def renomear_categoria(
+        self,
+        id_categoria: int,
+        novo_nome: str,
+    ) -> Categoria:
+        categoria = self.buscar_categoria(id_categoria)
+        if categoria is None:
+            raise ValueError("Categoria não encontrada.")
+        categoria.renomear(novo_nome)
+        return categoria
+
     def filtrar_jogos(
         self,
         titulo: str | None = None,

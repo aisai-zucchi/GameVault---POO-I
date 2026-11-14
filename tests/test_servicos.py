@@ -148,6 +148,22 @@ class TestCatalogo(unittest.TestCase):
         with self.assertRaises(ValueError):
             catalogo.cadastrar_categoria(Categoria(1, "RPG"))
 
+    def test_renomeia_categoria_cadastrada(self):
+        catalogo = Catalogo()
+        categoria = Categoria(1, "Aventura")
+        catalogo.cadastrar_categoria(categoria)
+
+        renomeada = catalogo.renomear_categoria(1, "Ação e aventura")
+
+        self.assertIs(categoria, renomeada)
+        self.assertEqual("Ação e aventura", categoria.nome)
+
+    def test_recusa_renomear_categoria_inexistente(self):
+        catalogo = Catalogo()
+
+        with self.assertRaisesRegex(ValueError, "Categoria não encontrada"):
+            catalogo.renomear_categoria(99, "RPG")
+
     def test_filtra_jogos_por_titulo_ano_e_tipo(self):
         catalogo = Catalogo()
         minecraft = JogoFisico("Minecraft", 2011)

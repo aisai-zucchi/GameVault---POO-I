@@ -147,6 +147,53 @@ def configurar_estilos(root: tk.Misc) -> ttk.Style:
         background=[("active", CORES["selecao"])],
         bordercolor=[("focus", CORES["borda_foco"])],
     )
+    estilo.configure(
+        "Danger.TButton",
+        background=CORES["elevada"],
+        foreground=CORES["erro"],
+        bordercolor=CORES["borda"],
+        borderwidth=1,
+        focusthickness=0,
+        padding=(12, 8),
+        font=(FONTE, 9),
+    )
+    estilo.map(
+        "Danger.TButton",
+        background=[("active", "#3A2027")],
+        foreground=[("active", "#FCA5A5")],
+        bordercolor=[("focus", CORES["erro"])],
+    )
+    estilo.configure(
+        "DetailAction.TButton",
+        background=CORES["elevada"],
+        foreground=CORES["texto"],
+        bordercolor=CORES["borda"],
+        borderwidth=1,
+        focusthickness=0,
+        padding=(6, 7),
+        font=(FONTE, 8),
+    )
+    estilo.map(
+        "DetailAction.TButton",
+        background=[("active", CORES["selecao"])],
+        bordercolor=[("focus", CORES["borda_foco"])],
+    )
+    estilo.configure(
+        "DetailDanger.TButton",
+        background=CORES["elevada"],
+        foreground=CORES["erro"],
+        bordercolor=CORES["borda"],
+        borderwidth=1,
+        focusthickness=0,
+        padding=(6, 7),
+        font=(FONTE, 8),
+    )
+    estilo.map(
+        "DetailDanger.TButton",
+        background=[("active", "#3A2027")],
+        foreground=[("active", "#FCA5A5")],
+        bordercolor=[("focus", CORES["erro"])],
+    )
 
     estilo.configure(
         "Input.TEntry",

@@ -203,6 +203,28 @@ class TestSistemaGameVault(unittest.TestCase):
         self.assertIs(self.membro, emprestimo.membro)
         self.assertIs(self.exemplar, emprestimo.exemplar)
 
+    def test_fachada_gerencia_jogo_e_categoria(self):
+        categoria = Categoria(1, "Aventura")
+        self.sistema.cadastrar_categoria(categoria)
+        digital = JogoDigital("Stardew", 2015, "GOG")
+        id_digital = self.sistema.cadastrar_jogo(digital)
+
+        atualizado = self.sistema.atualizar_jogo(
+            id_digital,
+            titulo="Stardew Valley",
+            ano=2016,
+            loja_origem="Steam",
+            plataforma="PC",
+            id_categoria=1,
+        )
+        renomeada = self.sistema.renomear_categoria(1, "Indie")
+
+        self.assertIs(digital, atualizado)
+        self.assertEqual("Stardew Valley", digital.titulo)
+        self.assertEqual("Steam", digital.loja_origem)
+        self.assertIs(categoria, renomeada)
+        self.assertEqual("Indie", categoria.nome)
+
     def test_recusa_membro_nao_cadastrado(self):
         with self.assertRaises(ValueError):
             self.sistema.registrar_emprestimo(999, self.exemplar, DATA_INICIO)
