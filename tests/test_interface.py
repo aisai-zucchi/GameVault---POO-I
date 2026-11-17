@@ -63,6 +63,19 @@ class TestTelaCatalogo(unittest.TestCase):
     def test_logo_e_carregada(self):
         self.assertIsNotNone(self.app._logo)
 
+    def test_navegacao_alterna_catalogo_e_membros(self):
+        self.app._abrir_membros()
+
+        self.assertEqual("membros", self.app.tela_atual)
+        self.assertEqual(
+            "SidebarActive.TButton",
+            self.app._botoes_navegacao["membros"].cget("style"),
+        )
+
+        self.app._abrir_catalogo()
+
+        self.assertEqual("catalogo", self.app.tela_atual)
+
     def test_catalogo_exibe_jogos_e_detalhe_inicial(self):
         self.assertEqual(2, len(self.tela.tabela.get_children()))
         self.assertEqual("Minecraft", self.tela.titulo_detalhe.cget("text"))

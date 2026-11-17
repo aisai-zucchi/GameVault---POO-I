@@ -104,6 +104,21 @@ def configurar_estilos(root: tk.Misc) -> ttk.Style:
     )
 
     estilo.configure(
+        "Sidebar.TButton",
+        background=CORES["sidebar"],
+        foreground=CORES["texto_secundario"],
+        borderwidth=0,
+        focusthickness=0,
+        padding=(14, 11),
+        anchor="w",
+        font=(FONTE, 10),
+    )
+    estilo.map(
+        "Sidebar.TButton",
+        background=[("active", CORES["elevada"])],
+        foreground=[("active", CORES["texto"])],
+    )
+    estilo.configure(
         "SidebarActive.TButton",
         background=CORES["selecao"],
         foreground=CORES["texto"],

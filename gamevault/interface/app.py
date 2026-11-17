@@ -4,6 +4,7 @@ from tkinter import ttk
 
 from gamevault.interface.estilos import CORES, FONTE, configurar_estilos
 from gamevault.interface.tela_catalogo import TelaCatalogo
+from gamevault.interface.tela_membros import TelaMembros
 from gamevault.sistema import SistemaGameVault
 
 
@@ -19,6 +20,9 @@ class GameVaultApp(tk.Tk):
         self._temporizador_status: str | None = None
         self._logo_original: tk.PhotoImage | None = None
         self._logo: tk.PhotoImage | None = None
+        self._botoes_navegacao: dict[str, ttk.Button] = {}
+        self._telas: dict[str, ttk.Frame] = {}
+        self.tela_atual = "catalogo"
 
         self.title("GameVault | Catálogo de Jogos")
         self.geometry("1240x720")
@@ -36,7 +40,7 @@ class GameVaultApp(tk.Tk):
         sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
         sidebar.grid_propagate(False)
         sidebar.columnconfigure(0, weight=1)
-        sidebar.rowconfigure(3, weight=1)
+        sidebar.rowconfigure(4, weight=1)
 
         marca = tk.Frame(sidebar, bg=CORES["sidebar"])
         marca.grid(row=0, column=0, sticky="ew", padx=18, pady=(22, 28))
@@ -47,12 +51,30 @@ class GameVaultApp(tk.Tk):
             text="NAVEGAÇÃO",
             style="Eyebrow.TLabel",
         ).grid(row=1, column=0, sticky="w", padx=20, pady=(0, 8))
-        ttk.Button(
+        self._botoes_navegacao["catalogo"] = ttk.Button(
             sidebar,
             text="  Catálogo",
             style="SidebarActive.TButton",
             command=self._abrir_catalogo,
-        ).grid(row=2, column=0, sticky="ew", padx=12)
+        )
+        self._botoes_navegacao["catalogo"].grid(
+            row=2,
+            column=0,
+            sticky="ew",
+            padx=12,
+        )
+        self._botoes_navegacao["membros"] = ttk.Button(
+            sidebar,
+            text="  Membros",
+            style="Sidebar.TButton",
+            command=self._abrir_membros,
+        )
+        self._botoes_navegacao["membros"].grid(
+            row=3,
+            column=0,
+            sticky="ew",
+            padx=12,
+        )
 
         if self.modo_demonstracao:
             tk.Label(
@@ -63,7 +85,7 @@ class GameVaultApp(tk.Tk):
                 font=(FONTE, 8, "bold"),
                 padx=9,
                 pady=5,
-            ).grid(row=4, column=0, sticky="sw", padx=20, pady=20)
+            ).grid(row=5, column=0, sticky="sw", padx=20, pady=20)
 
     def _carregar_logo(self, master: tk.Misc) -> None:
         caminho = Path(__file__).parent / "assets" / "logo.png"
@@ -109,6 +131,17 @@ class GameVaultApp(tk.Tk):
             ao_notificar=self.notificar,
         )
         self.tela_catalogo.grid(row=0, column=0, sticky="nsew")
+        self.tela_membros = TelaMembros(
+            area,
+            self.sistema,
+            ao_notificar=self.notificar,
+        )
+        self.tela_membros.grid(row=0, column=0, sticky="nsew")
+        self._telas = {
+            "catalogo": self.tela_catalogo,
+            "membros": self.tela_membros,
+        }
+        self._mostrar_tela("catalogo")
 
         status = tk.Frame(
             self,
@@ -131,6 +164,22 @@ class GameVaultApp(tk.Tk):
 
     def _abrir_catalogo(self) -> None:
         self.tela_catalogo.atualizar(silencioso=True)
+        self._mostrar_tela("catalogo")
+
+    def _abrir_membros(self) -> None:
+        self.tela_membros.atualizar()
+        self._mostrar_tela("membros")
+
+    def _mostrar_tela(self, nome: str) -> None:
+        self._telas[nome].tkraise()
+        self.tela_atual = nome
+        for chave, botao in self._botoes_navegacao.items():
+            estilo = (
+                "SidebarActive.TButton"
+                if chave == nome
+                else "Sidebar.TButton"
+            )
+            botao.configure(style=estilo)
 
     def notificar(self, mensagem: str, tipo: str = "info") -> None:
         cores = {
