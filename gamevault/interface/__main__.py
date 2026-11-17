@@ -1,5 +1,5 @@
 import argparse
-from datetime import date
+from datetime import date, timedelta
 
 from gamevault import (
     Categoria,
@@ -18,7 +18,7 @@ def criar_sistema_demonstracao() -> SistemaGameVault:
     estrategia = Categoria(2, "Estratégia")
     acao = Categoria(3, "Ação")
     for categoria in (aventura, estrategia, acao):
-        sistema.catalogo.cadastrar_categoria(categoria)
+        sistema.cadastrar_categoria(categoria)
 
     minecraft = JogoFisico(
         "Minecraft",
@@ -56,9 +56,25 @@ def criar_sistema_demonstracao() -> SistemaGameVault:
         sistema.cadastrar_exemplar(id_minecraft, Exemplar(codigo))
     sistema.cadastrar_exemplar(id_hollow_knight, Exemplar("HK-001"))
 
-    membro = Membro(1, "Ana Demo", "ana.demo@example.com")
-    sistema.cadastrar_membro(membro)
-    sistema.registrar_emprestimo(membro, "MC-002", date.today())
+    ana = Membro(1, "Ana Demo", "ana.demo@example.com")
+    bia = Membro(2, "Bia Demo", "bia.demo@example.com")
+    sistema.cadastrar_membro(ana)
+    sistema.cadastrar_membro(bia)
+    hoje = date.today()
+    sistema.registrar_emprestimo(
+        ana,
+        "MC-002",
+        hoje - timedelta(days=2),
+    )
+    finalizado = sistema.registrar_emprestimo(
+        bia,
+        "HK-001",
+        hoje - timedelta(days=9),
+    )
+    sistema.devolver_emprestimo(
+        finalizado.id_emprestimo,
+        hoje - timedelta(days=4),
+    )
     return sistema
 
 

@@ -15,7 +15,7 @@ Repositório: [aisai-zucchi/GameVault---POO-I](https://github.com/aisai-zucchi/G
 - registro de empréstimos com histórico e data de devolução;
 - devolução com liberação do exemplar;
 - bloqueio de exclusão de jogos com exemplar emprestado;
-- fachada `SistemaGameVault` para integrar catálogo, membros e empréstimos.
+- fachada `SistemaGameVault` para integrar catálogo, membros e empréstimos;
 - interface Tkinter para catálogo, membros, empréstimos, devoluções e histórico.
 
 ## Regras de negócio
@@ -77,6 +77,9 @@ gamevault/
 tests/
 |-- test_gamevault.py           # Fluxos integrados e regras RN01/RN02
 |-- test_interface.py
+|-- test_interface_emprestimos.py
+|-- test_interface_historico.py
+|-- test_interface_membros.py
 |-- test_main.py
 |-- test_modelos.py
 `-- test_servicos.py
@@ -128,5 +131,5 @@ python -B -m unittest discover -s tests -v
 ```
 
 Os testes cobrem modelos, encapsulamento, CRUD, categorias, consultas,
-polimorfismo, empréstimos, devoluções, RN01, RN02, integração do sistema e a
-demonstração do terminal.
+polimorfismo, empréstimos, devoluções, RN01, RN02, integração do sistema,
+interface gráfica e demonstração do terminal.

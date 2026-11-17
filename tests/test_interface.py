@@ -11,6 +11,7 @@ from gamevault import (
     Membro,
     SistemaGameVault,
 )
+from gamevault.interface.__main__ import criar_sistema_demonstracao
 from gamevault.interface.app import GameVaultApp
 from gamevault.interface.tela_catalogo import disponibilidade, filtrar_catalogo
 
@@ -22,6 +23,14 @@ class TestImportacaoInterface(unittest.TestCase):
         importlib.reload(modulo)
 
         self.assertIsNone(tk._default_root)
+
+    def test_dados_demonstrativos_cobrem_todas_as_telas(self):
+        sistema = criar_sistema_demonstracao()
+
+        self.assertEqual(4, len(sistema.catalogo.listar_jogos()))
+        self.assertEqual(2, len(sistema.cadastro_membros.listar()))
+        self.assertEqual(2, len(sistema.gestor_emprestimos.emprestimos))
+        self.assertEqual(1, len(sistema.listar_emprestimos_ativos()))
 
 
 class TestTelaCatalogo(unittest.TestCase):
