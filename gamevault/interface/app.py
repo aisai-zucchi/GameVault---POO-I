@@ -5,6 +5,7 @@ from tkinter import ttk
 from gamevault.interface.estilos import CORES, FONTE, configurar_estilos
 from gamevault.interface.tela_catalogo import TelaCatalogo
 from gamevault.interface.tela_emprestimos import TelaEmprestimos
+from gamevault.interface.tela_historico import TelaHistorico
 from gamevault.interface.tela_membros import TelaMembros
 from gamevault.sistema import SistemaGameVault
 
@@ -41,7 +42,7 @@ class GameVaultApp(tk.Tk):
         sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
         sidebar.grid_propagate(False)
         sidebar.columnconfigure(0, weight=1)
-        sidebar.rowconfigure(5, weight=1)
+        sidebar.rowconfigure(6, weight=1)
 
         marca = tk.Frame(sidebar, bg=CORES["sidebar"])
         marca.grid(row=0, column=0, sticky="ew", padx=18, pady=(22, 28))
@@ -88,6 +89,18 @@ class GameVaultApp(tk.Tk):
             sticky="ew",
             padx=12,
         )
+        self._botoes_navegacao["historico"] = ttk.Button(
+            sidebar,
+            text="  Histórico",
+            style="Sidebar.TButton",
+            command=self._abrir_historico,
+        )
+        self._botoes_navegacao["historico"].grid(
+            row=5,
+            column=0,
+            sticky="ew",
+            padx=12,
+        )
 
         if self.modo_demonstracao:
             tk.Label(
@@ -98,7 +111,7 @@ class GameVaultApp(tk.Tk):
                 font=(FONTE, 8, "bold"),
                 padx=9,
                 pady=5,
-            ).grid(row=6, column=0, sticky="sw", padx=20, pady=20)
+            ).grid(row=7, column=0, sticky="sw", padx=20, pady=20)
 
     def _carregar_logo(self, master: tk.Misc) -> None:
         caminho = Path(__file__).parent / "assets" / "logo.png"
@@ -156,10 +169,17 @@ class GameVaultApp(tk.Tk):
             ao_notificar=self.notificar,
         )
         self.tela_emprestimos.grid(row=0, column=0, sticky="nsew")
+        self.tela_historico = TelaHistorico(
+            area,
+            self.sistema,
+            ao_notificar=self.notificar,
+        )
+        self.tela_historico.grid(row=0, column=0, sticky="nsew")
         self._telas = {
             "catalogo": self.tela_catalogo,
             "membros": self.tela_membros,
             "emprestimos": self.tela_emprestimos,
+            "historico": self.tela_historico,
         }
         self._mostrar_tela("catalogo")
 
@@ -193,6 +213,10 @@ class GameVaultApp(tk.Tk):
     def _abrir_emprestimos(self) -> None:
         self.tela_emprestimos.atualizar()
         self._mostrar_tela("emprestimos")
+
+    def _abrir_historico(self) -> None:
+        self.tela_historico.atualizar()
+        self._mostrar_tela("historico")
 
     def _mostrar_tela(self, nome: str) -> None:
         self._telas[nome].tkraise()

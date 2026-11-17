@@ -76,6 +76,10 @@ class TestTelaCatalogo(unittest.TestCase):
 
         self.assertEqual("emprestimos", self.app.tela_atual)
 
+        self.app._abrir_historico()
+
+        self.assertEqual("historico", self.app.tela_atual)
+
         self.app._abrir_catalogo()
 
         self.assertEqual("catalogo", self.app.tela_atual)

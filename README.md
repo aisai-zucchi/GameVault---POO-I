@@ -16,7 +16,7 @@ Repositório: [aisai-zucchi/GameVault---POO-I](https://github.com/aisai-zucchi/G
 - devolução com liberação do exemplar;
 - bloqueio de exclusão de jogos com exemplar emprestado;
 - fachada `SistemaGameVault` para integrar catálogo, membros e empréstimos.
-- interface Tkinter para catálogo, membros, empréstimos e devoluções.
+- interface Tkinter para catálogo, membros, empréstimos, devoluções e histórico.
 
 ## Regras de negócio
 
@@ -62,6 +62,7 @@ gamevault/
 |   |-- janela_categorias.py
 |   |-- tela_catalogo.py
 |   |-- tela_emprestimos.py
+|   |-- tela_historico.py
 |   `-- tela_membros.py
 |-- modelos/
 |   |-- categoria.py
@@ -117,7 +118,8 @@ A interface permite pesquisar, filtrar, cadastrar, editar e excluir jogos. Nela
 também é possível cadastrar categorias, renomeá-las e adicionar exemplares aos
 jogos físicos. A tela de membros permite cadastrar e consultar usuários e seus
 empréstimos ativos. Também é possível registrar empréstimos e devoluções pela
-interface. O histórico completo fica para a próxima etapa.
+interface. O histórico reúne registros ativos e finalizados, com busca e filtro
+por status.
 
 ## Executar os testes
 
