@@ -63,7 +63,7 @@ class TestTelaCatalogo(unittest.TestCase):
     def test_logo_e_carregada(self):
         self.assertIsNotNone(self.app._logo)
 
-    def test_navegacao_alterna_catalogo_e_membros(self):
+    def test_navegacao_alterna_telas_principais(self):
         self.app._abrir_membros()
 
         self.assertEqual("membros", self.app.tela_atual)
@@ -71,6 +71,10 @@ class TestTelaCatalogo(unittest.TestCase):
             "SidebarActive.TButton",
             self.app._botoes_navegacao["membros"].cget("style"),
         )
+
+        self.app._abrir_emprestimos()
+
+        self.assertEqual("emprestimos", self.app.tela_atual)
 
         self.app._abrir_catalogo()
 
